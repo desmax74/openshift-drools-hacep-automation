@@ -1,0 +1,63 @@
+---
+  - name: Start CRC 1.7.0 and deploy Openshift Drools Hacep
+    hosts: localhost
+    gather_facts: true
+
+    vars:
+      libvirt_version: "4.3.1"
+      kube_password: "{{ lookup('file', '/home/{{ ansible_user_id }}/.crc/cache/crc_libvirt_{{ libvirt_version }}/kubeadmin-password') }}"
+
+    tasks:
+      - name: CRC setup
+        shell: "crc setup"
+
+      #### pass the key from https://cloud.redhat.com/openshift/install/crc/installer-provisioned
+
+      - name: Start CRC with 16GB (~ 3 minutes)
+        shell: "crc start config set memory 16384"
+        register: crc_result
+
+      - debug: msg="{{ crc_result }}"
+
+      - name: Login crc
+        shell: "oc login -u kubeadmin -p {{ kube_password }} https://api.crc.testing:6443"
+
+      - name: Create my-kafka-project
+        shell: "oc new-project my-kafka-project"
+
+      - name: Create service account RBAC
+        shell: "oc create -f /tmp/openshift-drools-hacep/springboot/kubernetes/service-account.yaml"
+
+      - name: Create role for RBAC
+        shell: "oc create -f /tmp/openshift-drools-hacep/springboot/kubernetes/role.yaml"
+
+      - name: Create role-binding for RBAC
+        shell: "oc create -f /tmp/openshift-drools-hacep/springboot/kubernetes/role-binding.yaml"
+
+      - name: Clone Hacep Kafka setup
+        become: false
+        git:
+          repo: "https://github.com/desmax74/openshift-handbook.git"
+          dest: "/tmp/openshift-handbook"
+          accept_hostkey: true
+          version: master
+
+      - name: Install Strimzi operator 0.16.2
+        shell: "curl -L https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.16.2/strimzi-cluster-operator-0.16.2.yaml \
+          | sed 's/namespace: .*/namespace: my-kafka-project/' \
+          | kubectl -n my-kafka-project apply -f -"
+
+      - name: Create kafka ephemeral cluster
+        shell: "kubectl apply -f /tmp/openshift-handbook/scripts/kakfa/fedora/0.16.2/kafka-ephemeral.yaml -n my-kafka-project"
+
+      - name: Create kafka events topic
+        shell: "oc create -f /tmp/openshift-handbook/scripts/kakfa/fedora/events.yaml"
+
+      - name: Create kafka control topic
+        shell: "oc create -f /tmp/openshift-handbook/scripts/kakfa/fedora/control.yaml"
+
+      - name: Create kafka snapshot topic
+        shell: "oc create -f /tmp/openshift-handbook/scripts/kakfa/fedora/snapshot.yaml"
+
+      - name: Create kafka kiesessioninfos topic
+        shell: "oc create -f /tmp/openshift-handbook/scripts/kakfa/fedora/kiesessioninfos.yaml"

@@ -1,0 +1,51 @@
+fe---
+  - name: Start CRC 1.7.0 and deploy Openshift Drools Hacep
+    hosts: localhost
+    gather_facts: true
+
+    vars:
+      libvirt_version: "4.3.1"
+      kube_password: "{{ lookup('file', '/home/{{ ansible_user_id }}/.crc/cache/crc_libvirt_{{ libvirt_version }}/kubeadmin-password') }}"
+
+    tasks:
+      - name: Tell us which host we are on
+        debug:
+          var: inventory_hostname
+
+      - name: Clone Hacep repo
+        become: false
+        git:
+          repo: "https://github.com/kiegroup/openshift-drools-hacep.git"
+          dest: "/tmp/openshift-drools-hacep"
+          accept_hostkey: true
+          version: master
+
+      - name: Running mvn clean install
+        shell: "cd /tmp/openshift-drools-hacep && mvn clean install -DskipTests"
+        register: mvn_result
+
+      - debug: msg="{{ mvn_result }}"
+
+      - name: Start CRC with 16GB (~ 3 minutes)
+        shell: "crc start config set memory 16384"
+        register: crc_result
+
+      - debug: msg="{{ crc_result }}"
+
+      - name: Login crc
+        shell: "oc login -u kubeadmin -p {{ kube_password }} https://api.crc.testing:6443"
+
+      - name: Switch to my-kafka-project
+        shell: "oc project my-kafka-project"
+
+      - name: Binary Build
+        shell: "cd /tmp/openshift-drools-hacep/springboot/ && oc new-build --binary --strategy=docker --name openshift-kie-springboot"
+
+      - name: Build
+        shell: "cd /tmp/openshift-drools-hacep/springboot/ && oc start-build openshift-kie-springboot --from-dir=. --follow "
+
+      - name: Deploy Hacep
+        shell: "oc create -f /tmp/openshift-drools-hacep/springboot/kubernetes/deployment.yaml"
+
+      - name: Open browser
+        shell: "crc console"
