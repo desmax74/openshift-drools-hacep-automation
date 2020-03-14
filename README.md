@@ -14,9 +14,7 @@ Create from scratch
 ansible-playbook fedora/playbook_create.yaml
 ```
 
-#### Ubuntu
-
-Create from scratch
+Simply start
 ```sh
-ansible-playbook fedora/playbook_create.yaml
+ansible-playbook fedora/playbook_start.yaml
 ```
