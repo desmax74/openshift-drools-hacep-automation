@@ -1,4 +1,4 @@
-fe---
+---
   - name: Start CRC 1.7.0 and deploy Openshift Drools Hacep
     hosts: localhost
     gather_facts: true
