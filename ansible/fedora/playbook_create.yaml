@@ -19,6 +19,46 @@
           content: "{{ PullSecret }}"
           dest: "~/.crc/crc-pull-secret"
 
+      - name: Copy service account RBAC
+        get_url:
+            url: "https://raw.githubusercontent.com/desmax74/openshift-drools-hacep/master/springboot/kubernetes/service-account.yaml"
+            dest: "/tmp/service-account.yaml"
+
+      - name: Copy role RBAC
+        get_url:
+            url: "https://raw.githubusercontent.com/desmax74/openshift-drools-hacep/master/springboot/kubernetes/role.yaml"
+            dest: "/tmp/role.yaml"
+
+      - name: Copy role-binding RBAC
+        get_url:
+            url: "https://raw.githubusercontent.com/desmax74/openshift-drools-hacep/master/springboot/kubernetes/role-binding.yaml"
+            dest: "/tmp/role-binding.yaml"
+
+      - name: Copy Kafka-ephemeral config RBAC
+        get_url:
+            url: "https://raw.githubusercontent.com/desmax74/openshift-handbook/master/scripts/kafka/fedora/0.16.2/kafka-ephemeral.yaml"
+            dest: "/tmp/kafka-ephemeral.yaml"
+
+      - name: Copy Kafka control topic config
+        get_url:
+            url: "https://raw.githubusercontent.com/desmax74/openshift-handbook/master/scripts/kafka/fedora/control.yaml"
+            dest: "/tmp/control.yaml"
+
+      - name: Copy Kafka events topic config
+        get_url:
+            url: "https://raw.githubusercontent.com/desmax74/openshift-handbook/master/scripts/kafka/fedora/events.yaml"
+            dest: "/tmp/events.yaml"
+
+      - name: Copy Kafka events topic config
+        get_url:
+            url: "https://raw.githubusercontent.com/desmax74/openshift-handbook/master/scripts/kafka/fedora/snapshot.yaml"
+            dest: "/tmp/snapshot.yaml"
+
+      - name: Copy Kafka kiesessioninfos topic config
+        get_url:
+            url: "https://raw.githubusercontent.com/desmax74/openshift-handbook/master/scripts/kafka/fedora/kiesessioninfos.yaml"
+            dest: "/tmp/kiesessioninfos.yaml"
+
       - name: Start CRC with 16GB (~ 3 minutes)
         shell: "crc start -m 16384 -p ~/.crc/crc-pull-secret"
 
@@ -28,40 +68,22 @@
       - name: Create my-kafka-project
         shell: "oc new-project my-kafka-project"
 
-      - name: Copy service account RBAC
-        copy:
-          src: "https://raw.githubusercontent.com/desmax74/openshift-drools-hacep/master/springboot/kubernetes/service-account.yaml"
-          remote_src: true
-          dest: "/tmp/service-account.yaml"
-
       - name: Create service account RBAC
         shell: "oc create -f /tmp/service-account.yaml"
-
-      - name: Copy role RBAC
-        copy:
-          src: "https://raw.githubusercontent.com/desmax74/openshift-drools-hacep/master/springboot/kubernetes/role.yaml"
-          remote_src: true
-          dest: "/tmp/role.yaml"
 
       - name: Create role for RBAC
         shell: "oc create -f /tmp/role.yaml"
 
-      - name: Copy role-binding RBAC
-        copy:
-          src: "https://raw.githubusercontent.com/desmax74/openshift-drools-hacep/master/springboot/kubernetes/role-binding.yaml"
-          remote_src: true
-          dest: "/tmp/role-binding.yaml"
-
       - name: Create role-binding for RBAC
         shell: "oc create -f /tmp/role-binding.yaml"
 
-      - name: Clone Hacep Kafka setup
-        become: false
-        git:
-          repo: "https://github.com/desmax74/openshift-handbook.git"
-          dest: "/tmp/openshift-handbook"
-          accept_hostkey: true
-          version: master
+      #- name: Clone Hacep Kafka setup
+      #  become: false
+      #  git:
+      #    repo: "https://github.com/desmax74/openshift-handbook.git"
+      #    dest: "/tmp/openshift-handbook"
+      #    accept_hostkey: true
+      #    version: master
 
       - name: Install Strimzi operator 0.16.2
         shell: "curl -L https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.16.2/strimzi-cluster-operator-0.16.2.yaml \
@@ -69,16 +91,16 @@
           | kubectl -n my-kafka-project apply -f -"
 
       - name: Create kafka ephemeral cluster
-        shell: "kubectl apply -f /tmp/openshift-handbook/scripts/kakfa/fedora/0.16.2/kafka-ephemeral.yaml -n my-kafka-project"
+        shell: "kubectl apply -f /tmp/kafka-ephemeral.yaml -n my-kafka-project"
 
       - name: Create kafka events topic
-        shell: "oc create -f /tmp/openshift-handbook/scripts/kakfa/fedora/events.yaml"
+        shell: "oc create -f /tmp/events.yaml"
 
       - name: Create kafka control topic
-        shell: "oc create -f /tmp/openshift-handbook/scripts/kakfa/fedora/control.yaml"
+        shell: "oc create -f /tmp/control.yaml"
 
       - name: Create kafka snapshot topic
-        shell: "oc create -f /tmp/openshift-handbook/scripts/kakfa/fedora/snapshot.yaml"
+        shell: "oc create -f /tmp/snapshot.yaml"
 
       - name: Create kafka kiesessioninfos topic
-        shell: "oc create -f /tmp/openshift-handbook/scripts/kakfa/fedora/kiesessioninfos.yaml"
+        shell: "oc create -f /tmp/kiesessioninfos.yaml"
