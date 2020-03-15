@@ -6,18 +6,21 @@
     vars:
       libvirt_version: "4.3.1"
       kube_password: "{{ lookup('file', '/home/{{ ansible_user_id }}/.crc/cache/crc_libvirt_{{ libvirt_version }}/kubeadmin-password') }}"
+    vars_prompt:
+      - name: "PullSecret"
+        prompt: "Insert your Pull secret"
 
     tasks:
       - name: CRC setup
         shell: "crc setup"
 
-      #### pass the key from https://cloud.redhat.com/openshift/install/crc/installer-provisioned
+      - name: Write pull secret
+        copy:
+          content: "{{ PullSecret }}"
+          dest: "~/.crc/crc-pull-secret"
 
       - name: Start CRC with 16GB (~ 3 minutes)
-        shell: "crc start config set memory 16384"
-        register: crc_result
-
-      - debug: msg="{{ crc_result }}"
+        shell: "crc start -m 16384 -p ~/.crc/crc-pull-secret"
 
       - name: Login crc
         shell: "oc login -u kubeadmin -p {{ kube_password }} https://api.crc.testing:6443"
@@ -25,14 +28,32 @@
       - name: Create my-kafka-project
         shell: "oc new-project my-kafka-project"
 
+      - name: Copy service account RBAC
+        copy:
+          src: "https://raw.githubusercontent.com/desmax74/openshift-drools-hacep/master/springboot/kubernetes/service-account.yaml"
+          remote_src: true
+          dest: "/tmp/service-account.yaml"
+
       - name: Create service account RBAC
-        shell: "oc create -f /tmp/openshift-drools-hacep/springboot/kubernetes/service-account.yaml"
+        shell: "oc create -f /tmp/service-account.yaml"
+
+      - name: Copy role RBAC
+        copy:
+          src: "https://raw.githubusercontent.com/desmax74/openshift-drools-hacep/master/springboot/kubernetes/role.yaml"
+          remote_src: true
+          dest: "/tmp/role.yaml"
 
       - name: Create role for RBAC
-        shell: "oc create -f /tmp/openshift-drools-hacep/springboot/kubernetes/role.yaml"
+        shell: "oc create -f /tmp/role.yaml"
+
+      - name: Copy role-binding RBAC
+        copy:
+          src: "https://raw.githubusercontent.com/desmax74/openshift-drools-hacep/master/springboot/kubernetes/role-binding.yaml"
+          remote_src: true
+          dest: "/tmp/role-binding.yaml"
 
       - name: Create role-binding for RBAC
-        shell: "oc create -f /tmp/openshift-drools-hacep/springboot/kubernetes/role-binding.yaml"
+        shell: "oc create -f /tmp/role-binding.yaml"
 
       - name: Clone Hacep Kafka setup
         become: false
