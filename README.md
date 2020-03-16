@@ -2,7 +2,7 @@
 
 Ansible and scripts to automate openshift-drools-hacep-automation with just one command line.
 
-CRC, Git, Java and Maven must be installed, and Ansible of course.
+CRC 1.7.0, Git, Java 1.8, Maven 3.6.3 and Ansible of course, must be installed.
 
 #### Fedora
 
