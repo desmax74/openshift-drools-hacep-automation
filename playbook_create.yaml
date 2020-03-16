@@ -66,6 +66,9 @@
       - name: Login crc
         shell: "oc login -u kubeadmin -p {{ kube_password }} https://api.crc.testing:6443"
 
+      - name: Create my-kafka-project
+          shell: "oc new-project {{ openshift_namespace }}"
+
       - name: Create service account RBAC
         shell: "oc create -f /tmp/service-account.yaml"
 
@@ -95,5 +98,4 @@
       - name: Create kafka kiesessioninfos topic
         shell: "oc create -f /tmp/kiesessioninfos.yaml"
 
-      - name: Create my-kafka-project
-          shell: "oc new-project {{ openshift_namespace }}"
+      - debug: msg="Your Kube Password is {{ kube_password }}"
