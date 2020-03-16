@@ -67,7 +67,7 @@
         shell: "oc login -u kubeadmin -p {{ kube_password }} https://api.crc.testing:6443"
 
       - name: Create my-kafka-project
-          shell: "oc new-project {{ openshift_namespace }}"
+        shell: "oc new-project {{ openshift_namespace }}"
 
       - name: Create service account RBAC
         shell: "oc create -f /tmp/service-account.yaml"
