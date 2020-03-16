@@ -7,7 +7,14 @@
       libvirt_version: "4.3.1"
       kube_password: "{{ lookup('file', '/home/{{ ansible_user_id }}/.crc/cache/crc_libvirt_{{ libvirt_version }}/kubeadmin-password') }}"
 
+    vars_prompt:
+      - name: "nameSpace"
+        prompt: "Insert your Project Name/ NameSpace"
+
     tasks:
+      -
+      - debug: msg="Project Name {{ nameSpace }}"
+
       - name: Tell us which host we are on
         debug:
           var: inventory_hostname
@@ -35,8 +42,8 @@
       - name: Login crc
         shell: "oc login -u kubeadmin -p {{ kube_password }} https://api.crc.testing:6443"
 
-      - name: Switch to my-kafka-project
-        shell: "oc project my-kafka-project"
+      - name: Switch to {{ nameSpace}}
+        shell: "oc project {{ nameSpace }}"
 
       - name: Binary Build
         shell: "cd /tmp/openshift-drools-hacep/springboot/ && oc new-build --binary --strategy=docker --name openshift-kie-springboot"

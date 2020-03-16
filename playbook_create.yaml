@@ -6,14 +6,20 @@
     vars:
       libvirt_version: "4.3.1"
       kube_password: "{{ lookup('file', '/home/{{ ansible_user_id }}/.crc/cache/crc_libvirt_{{ libvirt_version }}/kubeadmin-password') }}"
-      openshift_namespace: "my-kafka-project"
     vars_prompt:
+      - name: "nameSpace"
+        prompt: "Insert your Project Name/ NameSpace"
       - name: "PullSecret"
         prompt: "Insert your Pull secret"
 
     tasks:
+      - debug: msg="Project Name {{ nameSpace }}"
+
       - name: CRC setup
         shell: "crc setup"
+        register: crc_result
+
+      - debug: msg="{{ crc_result }}"
 
       - name: Write pull secret
         copy:
@@ -66,8 +72,8 @@
       - name: Login crc
         shell: "oc login -u kubeadmin -p {{ kube_password }} https://api.crc.testing:6443"
 
-      - name: Create my-kafka-project
-        shell: "oc new-project {{ openshift_namespace }}"
+      - name: Create {{ nameSpace }}
+        shell: "oc new-project {{ nameSpace }}"
 
       - name: Create service account RBAC
         shell: "oc create -f /tmp/service-account.yaml"
@@ -80,11 +86,11 @@
 
       - name: Install Strimzi operator 0.16.2
         shell: "curl -L https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.16.2/strimzi-cluster-operator-0.16.2.yaml \
-          | sed 's/namespace: .*/namespace: my-kafka-project/' \
-          | kubectl -n {{ openshift_namespace }} apply -f -"
+          | sed 's/namespace: .*/namespace: {{ nameSpace }}/' \
+          | kubectl -n {{ nameSpace }} apply -f -"
 
       - name: Create kafka ephemeral cluster
-        shell: "kubectl apply -f /tmp/kafka-ephemeral.yaml -n {{ openshift_namespace }}"
+        shell: "kubectl apply -f /tmp/kafka-ephemeral.yaml -n {{ nameSpace }}"
 
       - name: Create kafka events topic
         shell: "oc create -f /tmp/events.yaml"
