@@ -15,10 +15,6 @@
       -
       - debug: msg="Project Name {{ nameSpace }}"
 
-      - name: Tell us which host we are on
-        debug:
-          var: inventory_hostname
-
       - name: Clone Hacep repo
         become: false
         git:
