@@ -45,7 +45,7 @@
         shell: "cd /tmp/openshift-drools-hacep/springboot/ && oc start-build openshift-kie-springboot --from-dir=. --follow "
 
       - name: Deploy Hacep
-        shell: "oc create -f /tmp/openshift-drools-hacep/springboot/kubernetes/deployment.yaml"
+        shell: "oc create -f ./kubernetes/deployment.yaml"
 
       - name: Open browser
         shell: "crc console"
