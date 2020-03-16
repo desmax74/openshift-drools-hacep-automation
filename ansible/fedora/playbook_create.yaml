@@ -66,9 +66,6 @@
       - name: Login crc
         shell: "oc login -u kubeadmin -p {{ kube_password }} https://api.crc.testing:6443"
 
-      - name: Create my-kafka-project
-        shell: "oc new-project {{ openshift_namespace }}"
-
       - name: Create service account RBAC
         shell: "oc create -f /tmp/service-account.yaml"
 
@@ -77,14 +74,6 @@
 
       - name: Create role-binding for RBAC
         shell: "oc create -f /tmp/role-binding.yaml"
-
-      #- name: Clone Hacep Kafka setup
-      #  become: false
-      #  git:
-      #    repo: "https://github.com/desmax74/openshift-handbook.git"
-      #    dest: "/tmp/openshift-handbook"
-      #    accept_hostkey: true
-      #    version: master
 
       - name: Install Strimzi operator 0.16.2
         shell: "curl -L https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.16.2/strimzi-cluster-operator-0.16.2.yaml \
@@ -106,3 +95,5 @@
       - name: Create kafka kiesessioninfos topic
         shell: "oc create -f /tmp/kiesessioninfos.yaml"
 
+      - name: Create my-kafka-project
+          shell: "oc new-project {{ openshift_namespace }}"
