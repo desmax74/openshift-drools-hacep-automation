@@ -2,6 +2,8 @@
 
 Ansible and scripts to automate openshift-drools-hacep-automation with just one command line.
 
+CRC, Git, Java and Maven must be installed, and Ansible of course.
+
 #### Fedora
 
 Create from scratch the crc setup, kafka cluster, topics and namespace
