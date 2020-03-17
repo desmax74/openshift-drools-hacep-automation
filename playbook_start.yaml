@@ -35,6 +35,9 @@
 
       - debug: msg="{{ crc_result }}"
 
+      - name: Add .crc/bin to the path
+        shell: "export PATH=$PATH:/home/{{ansible_user_id}}/.crc/bin/"
+
       - name: Login crc
         shell: "oc login -u kubeadmin -p {{ kube_password }} https://api.crc.testing:6443"
 

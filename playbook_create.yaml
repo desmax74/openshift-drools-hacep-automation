@@ -69,6 +69,12 @@
       - name: Start CRC with 16GB (~ 3 minutes)
         shell: "crc start -m 16384 -p ~/.crc/crc-pull-secret"
 
+      - name: Add .crc/bin to the path
+        shell: "export PATH=$PATH:/home/{{ansible_user_id}}/.crc/bin/"
+
+      - name: Move oc from /tmp to /home/{{ansible_user_id}}/.local/bin
+        command: "cp /home/{{ansible_user_id}}/.crc/bin/oc /home/{{ansible_user_id}}/.local/bin/"
+
       - name: Login crc
         shell: "oc login -u kubeadmin -p {{ kube_password }} https://api.crc.testing:6443"
 
