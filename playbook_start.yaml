@@ -55,3 +55,5 @@
 
       - name: Open browser
         shell: "crc console"
+
+      - debug: msg="Your Kubeadmin Password is {{ kube_password }}"
