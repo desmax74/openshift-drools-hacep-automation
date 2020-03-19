@@ -24,3 +24,4 @@ Simple start after the create from scratch
 ```sh
 ansible-playbook ./playbook_start.yaml
 ```
+[![asciicast](https://asciinema.org/a/311654.png)](https://asciinema.org/a/311654)
