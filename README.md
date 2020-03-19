@@ -16,6 +16,9 @@ Create from scratch the crc setup, kafka cluster, topics and namespace
 ```sh
 ansible-playbook ./playbook_create.yaml
 ```
+Note: The CRC setup spent 10 minute, cut to 1 minute in the video recording
+
+[![asciicast](https://asciinema.org/a/311642.png)](https://asciinema.org/a/311642)
 
 Simple start after the create from scratch
 ```sh
