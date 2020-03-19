@@ -29,7 +29,7 @@
 
       - debug: msg="{{ mvn_result }}"
 
-      - name: Start CRC with 16GB (~ 3 minutes)
+      - name: Start CRC with 16GB (~ 10 minutes)
         shell: "crc start config set memory 16384"
         register: crc_result
 
