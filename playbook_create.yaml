@@ -66,7 +66,7 @@
             url: "https://raw.githubusercontent.com/desmax74/openshift-handbook/master/scripts/kafka/fedora/kiesessioninfos.yaml"
             dest: "/tmp/kiesessioninfos.yaml"
 
-      - name: Start CRC with 16GB (~ 3 minutes)
+      - name: Start CRC with 16GB (~ 10 minutes)
         shell: "crc start -m 16384 -p ~/.crc/crc-pull-secret"
 
       - name: Add .crc/bin to the path
