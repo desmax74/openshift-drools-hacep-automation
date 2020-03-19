@@ -116,4 +116,6 @@
       - name: Create kafka kiesessioninfos topic
         shell: "oc create -f /tmp/kiesessioninfos.yaml"
 
+      - debug: msg="Your project Name is {{ nameSpace }}"
+
       - debug: msg="Your Kube Password is {{ kube_password }}"
