@@ -15,6 +15,16 @@
     tasks:
       - debug: msg="Project Name {{ nameSpace }}"
 
+      - name: Adjust etc/hosts
+        linefile:
+          dest: "/etc/hosts"
+          regexp: "^.apps-crc.testing"
+          line: "{{ item.line }}"
+            with_items:
+              - { regexp: '^oauth-openshift.apps-crc.testing', line: '192.168.130.11   oauth-openshift.apps-crc.testing' }
+              - { regexp: '^console-openshift-console.apps-crc.testing', line: '192.168.130.11   console-openshift-console.apps-crc.testing' }
+              - { regexp: '^my-cluster-kafka-bootstrap-my-kafka-project.apps-crc.testing', line: 'my-cluster-kafka-bootstrap-my-kafka-project.apps-crc.testing' }
+
       - name: CRC setup
         shell: "crc setup"
         register: crc_result
