@@ -4,11 +4,14 @@
     gather_facts: true
 
     vars:
+      strimzi_version: "0.16.2"
+      ram: "16384" #MB
       libvirt_version: "4.3.1"
       kube_password: "{{ lookup('file', '/home/{{ ansible_user_id }}/.crc/cache/crc_libvirt_{{ libvirt_version }}/kubeadmin-password') }}"
     vars_prompt:
       - name: "nameSpace"
         prompt: "Insert your Project Name/ NameSpace"
+        private: "no"
       - name: "PullSecret"
         prompt: "Insert your Pull secret"
 
@@ -61,7 +64,7 @@
 
       - name: Copy Kafka-ephemeral config RBAC
         get_url:
-            url: "https://raw.githubusercontent.com/desmax74/openshift-handbook/master/scripts/kafka/fedora/0.16.2/kafka-ephemeral.yaml"
+            url: "https://raw.githubusercontent.com/desmax74/openshift-handbook/master/scripts/kafka/fedora/{{ strimzi_version }}/kafka-ephemeral.yaml"
             dest: "/tmp/kafka-ephemeral.yaml"
 
       - name: Copy Kafka control topic config
@@ -85,7 +88,7 @@
             dest: "/tmp/kiesessioninfos.yaml"
 
       - name: Start CRC with 16GB (~ 10 minutes)
-        shell: "crc start -m 16384 -p ~/.crc/crc-pull-secret"
+        shell: "crc start -m {{ ram }} -p ~/.crc/crc-pull-secret"
 
       - name: Add .crc/bin to the path
         shell: "export PATH=$PATH:/home/{{ansible_user_id}}/.crc/bin/"
@@ -114,8 +117,8 @@
       - name: Create role-binding for RBAC
         shell: "oc create -f /tmp/role-binding.yaml"
 
-      - name: Install Strimzi operator 0.16.2
-        shell: "curl -L https://github.com/strimzi/strimzi-kafka-operator/releases/download/0.16.2/strimzi-cluster-operator-0.16.2.yaml \
+      - name: Install Strimzi operator {{ strimzi_version }}
+        shell: "curl -L https://github.com/strimzi/strimzi-kafka-operator/releases/download/{{ strimzi_version }}/strimzi-cluster-operator-{{ strimzi_version }}.yaml \
           | sed 's/namespace: .*/namespace: {{ nameSpace }}/' \
           | kubectl -n {{ nameSpace }} apply -f -"
 
