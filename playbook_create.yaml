@@ -18,24 +18,6 @@
     tasks:
       - debug: msg="Project Name {{ nameSpace }}"
 
-      - name: Check api in hosts
-        lineinfile:
-          path: /etc/hosts
-          line: 192.168.130.11   api.crc.testing
-          create: yes
-
-      - name: Check oauth in hosts
-        lineinfile:
-          path: /etc/hosts
-          line: 192.168.130.11   oauth-openshift.apps-crc.testing
-          create: yes
-
-      - name: Check console in hosts
-        lineinfile:
-          path: /etc/hosts
-          line: 192.168.130.11   console-openshift-console.apps-crc.testing
-          create: yes
-
       - name: CRC setup
         shell: "crc setup"
         register: crc_result

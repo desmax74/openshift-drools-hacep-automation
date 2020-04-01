@@ -1,0 +1,51 @@
+---
+- name: Checks etc/hosts config
+  hosts: localhost
+
+  vars:
+    kafka_namespace: "my-cluster-kafka"
+    app_namespace: "my-kafka-project"
+
+  tasks:
+
+  - name: Check api in hosts
+    lineinfile:
+      path: /etc/hosts
+      line: "192.168.130.11   api.crc.testing"
+      create: yes
+
+  - name: Check oauth in hosts
+    lineinfile:
+      path: /etc/hosts
+      line: "192.168.130.11   oauth-openshift.apps-crc.testing"
+      create: yes
+
+  - name: Check console in hosts
+    lineinfile:
+      path: /etc/hosts
+      line: "192.168.130.11   console-openshift-console.apps-crc.testing"
+      create: yes
+
+  - name: Check {{kafka_namespace}}-bootstrap-{{app_namespace}}.apps-crc.testing in hosts
+    lineinfile:
+      path: /etc/hosts
+      line: "192.168.130.11   {{kafka_namespace}}-bootstrap-{{app_namespace}}.apps-crc.testing"
+      create: yes
+
+  - name: Check {{kafka_namespace}}-0-{{app_namespace}}.apps-crc.testing in hosts
+    lineinfile:
+      path: /etc/hosts
+      line: "192.168.130.11   {{kafka_namespace}}-0-{{app_namespace}}.apps-crc.testing"
+      create: yes
+
+  - name: Check {{kafka_namespace}}-1-{{app_namespace}}.apps-crc.testing in hosts
+    lineinfile:
+      path: /etc/hosts
+      line: "192.168.130.11   my-cluster-kafka-1-{{app_namespace}}.apps-crc.testing"
+      create: yes
+
+  - name: Check {{kafka_namespace}}-2-{{app_namespace}}.apps-crc.testing in hosts
+    lineinfile:
+      path: /etc/hosts
+      line: "192.168.130.11   my-cluster-kafka-2-{{app_namespace}}.apps-crc.testing"
+      create: yes
