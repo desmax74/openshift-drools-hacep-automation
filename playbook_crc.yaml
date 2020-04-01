@@ -1,14 +1,14 @@
 ---
-- name: Start CRC 1.7.0 and deploy Openshift Drools Hacep
+- name: Install Kava. Maven, Git, CRC
   hosts: localhost
   gather_facts: true
 
   tasks:
 
-    - name: Install Java.
+    - name: Install Java on ReHat.
       dnf: name=openjdk-8-jdk state=present
       when: ansible_facts['os_family'] == "Redhat"
 
-    - name: Install Java.
+    - name: Install Java On Debian.
       apt: name=openjdk-8-jdk state=present
       when: ansible_facts['os_family'] == "Debian"
