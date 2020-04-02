@@ -1,16 +1,17 @@
 ---
-  - name: Start CRC 1.7.0 and deploy Openshift Drools Hacep
+  - name: Start CRC 1.8.0 and deploy Openshift Drools Hacep
     hosts: localhost
     gather_facts: true
 
     vars:
       strimzi_version: "0.16.2"
       ram: "16384" #MB
-      libvirt_version: "4.3.1"
+      libvirt_version: "4.3.8"
       kube_password: "{{ lookup('file', '/home/{{ ansible_user_id }}/.crc/cache/crc_libvirt_{{ libvirt_version }}/kubeadmin-password') }}"
     vars_prompt:
       - name: "nameSpace"
         prompt: "Insert your Project Name/ NameSpace"
+        default: "my-kafka-project"
         private: "no"
       - name: "PullSecret"
         prompt: "Insert your Pull secret"
