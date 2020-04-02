@@ -6,16 +6,6 @@
   tasks:
 
     - name: install
-      shell: "sudo apt install qemu-kvm libvirt-daemon libvirt-daemon-system network-manager"
-      become: yes
-      when: ansible_os_family == 'Debian'
-
-    - name: usermod libvirtd
-      shell: "usermod -aG libvirtd $(whoami)"
-      become: yes
-      when: ansible_os_family == 'Debian'
-
-    - name: newgrp libvirtd
-      shell: "newgrp libvirtd"
+      shell: "sudo apt install qemu-kvm libvirt-daemon libvirt-daemon-system network-manager -y"
       become: yes
       when: ansible_os_family == 'Debian'
