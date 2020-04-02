@@ -12,18 +12,21 @@ https://cloud.redhat.com/openshift/install and download or copy your Pull secret
 
 #### Ansible commands
 
-On Debian/Ubuntu only:
+Pre requisite on Debian/Ubuntu:
+
+Install libvirt libs on Debian/Ubuntu:
 ```sh
-ansible-playbook ./playbook_libs.yaml
+sudo ansible-playbook ./playbook_libs.yaml
 ```
 
+
 Download and copy CRC in the user's path (2GB),
-change the kafka namespace (my-cluster-kafka) and app_name (my-kafka-project) in the file if you want different names
+change the app_name (my-kafka-project) in the file if you want different name
 ```sh
 ansible-playbook ./playbook_crc.yaml
 ```
 
-Configure etc/hosts
+Configure etc/hosts (default is kafka_cluster_name: "my-cluster-kafka" and app_namespace: "my-kafka-project")
 ```sh
 sudo ansible-playbook ./playbook_etc_hosts.yaml
 ```

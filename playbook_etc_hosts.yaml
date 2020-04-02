@@ -3,7 +3,7 @@
   hosts: localhost
 
   vars:
-    kafka_namespace: "my-cluster-kafka"
+    kafka_cluster_name: "my-cluster-kafka"
     app_namespace: "my-kafka-project"
 
   tasks:
