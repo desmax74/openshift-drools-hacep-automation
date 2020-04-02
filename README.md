@@ -39,8 +39,8 @@ Note: The CRC setup spent 10 minute, cut to 1 minute in the video recording
 
 [![asciicast](https://asciinema.org/a/311642.png)](https://asciinema.org/a/311642)
 
-Simple start after the create from scratch
+Deploy after the create from scratch
 ```sh
-ansible-playbook ./playbook_start.yaml
+ansible-playbook ./playbook_deploy.yaml
 ```
 [![asciicast](https://asciinema.org/a/311654.png)](https://asciinema.org/a/311654)
