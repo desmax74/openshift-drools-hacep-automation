@@ -45,7 +45,7 @@
             url: "https://raw.githubusercontent.com/desmax74/openshift-drools-hacep/master/springboot/kubernetes/role-binding.yaml"
             dest: "/tmp/role-binding.yaml"
 
-      - name: Copy Kafka-ephemeral config RBAC
+      - name: Copy Kafka-ephemeral
         get_url:
             url: "https://raw.githubusercontent.com/desmax74/openshift-handbook/master/scripts/kafka/fedora/{{ strimzi_version }}/kafka-ephemeral.yaml"
             dest: "/tmp/kafka-ephemeral.yaml"
@@ -107,6 +107,14 @@
 
       - name: Create kafka ephemeral cluster
         shell: "kubectl apply -f /tmp/kafka-ephemeral.yaml -n {{ nameSpace }}"
+
+      - name: Check AvailableReplica on Strimzi cluster first on {{ nameSpace }} wait for up to 240 sec, poll every 10 sec, 24 times
+        shell: "kubectl get pods --selector=strimzi.io/name=my-cluster-entity-operator -o jsonpath='{.items[*].status.phase}'"
+        register: result
+        until: result.stdout.find("Running") != -1
+        async: 240
+        poll: 10
+        retries: 24
 
       - name: Create kafka events topic
         shell: "oc create -f /tmp/events.yaml"
